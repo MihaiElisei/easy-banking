@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.eazybaniking.accounts.constants.AccountsConstants.MESSAGE_200;
 import static com.eazybaniking.accounts.constants.AccountsConstants.STATUS_201;
@@ -31,6 +28,11 @@ public class AccountsController {
                 .body(new ResponseDTO(STATUS_201, MESSAGE_200));
     }
 
+    @GetMapping("/fetch")
+    public ResponseEntity<CustomerDTO> fetchAccountDetails(@RequestParam String mobileNumber){
+        CustomerDTO customerDTO =  iaccountsService.fetchAccount(mobileNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(customerDTO);
 
+    }
 
 }

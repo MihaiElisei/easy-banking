@@ -1,10 +1,13 @@
 package com.eazybaniking.accounts.services.impl;
 
+import com.eazybaniking.accounts.DTO.AccountsDTO;
 import com.eazybaniking.accounts.DTO.CustomerDTO;
 import com.eazybaniking.accounts.constants.AccountsConstants;
 import com.eazybaniking.accounts.entity.Accounts;
 import com.eazybaniking.accounts.entity.Customer;
 import com.eazybaniking.accounts.exception.CustomerAlreadyExistsException;
+import com.eazybaniking.accounts.exception.ResourceNotFoundException;
+import com.eazybaniking.accounts.mapper.AccountsMapper;
 import com.eazybaniking.accounts.mapper.CustomerMapper;
 import com.eazybaniking.accounts.repositories.AccountsRepository;
 import com.eazybaniking.accounts.repositories.CustomerRepository;
@@ -58,5 +61,23 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccount.setCreatedAt(LocalDateTime.now());
         newAccount.setCreatedBy("Anonymous");
         return  newAccount;
+    }
+
+    /**
+     *
+     * @param mobileNumber - Input Mobile Number
+     * @return Account Details based on a given mobile number
+     */
+    @Override
+    public CustomerDTO fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer",  "mobileNumber", mobileNumber)
+        );
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account",  "customerId", customer.getCustomerId().toString())
+        );
+        CustomerDTO customerDTO = CustomerMapper.mapToCustomerDTO(customer, new CustomerDTO());
+        customerDTO.setAccountsDTO(AccountsMapper.mapToAccountsDTO(accounts, new AccountsDTO()));
+        return customerDTO;
     }
 }
