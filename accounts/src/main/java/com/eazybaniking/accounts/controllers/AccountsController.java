@@ -49,4 +49,18 @@ public class AccountsController {
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDTO> deleteAccountDetails(@RequestParam String mobileNumber){
+        boolean isDeleted = iAccountsService.deleteAccount(mobileNumber);
+        if(isDeleted) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDTO(STATUS_200, MESSAGE_200));
+        }else {
+            return ResponseEntity
+                    .status(INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(STATUS_500, MESSAGE_500));
+        }
+    }
+
 }
